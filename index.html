@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=0.6">
+    <title>Dashboard Zauri Bot</title>
+    <!-- Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Tailwind CSS vía CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        /* Estilos adicionales para glassmorphism si es necesario */
+        .glass {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+        }
+    </style>
+</head>
+<body class="bg-slate-900 text-white">
+    <!-- Contenedor principal -->
+    <div class="flex h-screen">
+        <!-- Sidebar lateral fijo -->
+        <aside class="w-64 bg-[#0b0e14] fixed h-full z-10">
+            <div class="p-6">
+                <h2 class="text-xl font-bold mb-8">Zauri Bot</h2>
+                <nav class="space-y-4">
+                    <a href="#" class="flex items-center space-x-3 p-3 rounded-lg hover:bg-white/10 hover:translate-x-2 transition-all">
+                        <i data-lucide="home" class="w-5 h-5"></i>
+                        <span>Inicio</span>
+                    </a>
+                    <a href="#" class="flex items-center space-x-3 p-3 rounded-lg hover:bg-white/10 hover:translate-x-2 transition-all" onclick="alert('En desarrollo')">
+                        <i data-lucide="settings" class="w-5 h-5"></i>
+                        <span>Comandos</span>
+                    </a>
+                    <a href="https://discord.gg/zauri" target="_blank" class="flex items-center space-x-3 p-3 rounded-lg hover:bg-white/10 hover:translate-x-2 transition-all bg-[#5865f2]/20 border border-[#5865f2]">
+                        <i data-lucide="help-circle" class="w-5 h-5"></i>
+                        <span>Soporte</span>
+                    </a>
+                </nav>
+            </div>
+        </aside>
+
+        <!-- Área de contenido principal -->
+        <main class="flex-1 bg-[#0f172a] ml-64">
+            <!-- Header -->
+            <header class="bg-[#0b0e14] p-4 flex justify-between items-center border-b border-white/10">
+                <h1 class="text-2xl font-semibold">Dashboard Zauri Bot</h1>
+                <button id="loginBtn" class="bg-[#5865f2] hover:bg-[#4752c4] hover:shadow-lg text-white px-4 py-2 rounded-lg font-medium transition" onclick="handleLogin()">
+                    Login
+                </button>
+            </header>
+
+            <!-- Contenido -->
+            <div class="p-6 space-y-8">
+                <!-- Sección de Bienvenida -->
+                <section class="text-center">
+                    <h2 class="text-3xl font-bold mb-4">Zauri Bot Dashboard</h2>
+                    <p class="text-gray-400">Bienvenido al panel de control de Zauri Bot. Aquí puedes monitorear estadísticas, invitaciones y más.</p>
+                </section>
+
+                <!-- Sección de Estadísticas Básicas -->
+                <section>
+                    <h2 class="text-xl font-semibold mb-4">Estadísticas Básicas</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <!-- Tarjeta 1 -->
+                        <div class="glass rounded-lg p-6">
+                            <h3 class="text-lg font-medium mb-2">Total Usuarios</h3>
+                            <p class="text-3xl font-bold">Cargando...</p>
+                        </div>
+                        <!-- Tarjeta 2 -->
+                        <div class="glass rounded-lg p-6">
+                            <h3 class="text-lg font-medium mb-2">Invitaciones Totales</h3>
+                            <p class="text-3xl font-bold">Cargando...</p>
+                        </div>
+                        <!-- Tarjeta 3 -->
+                        <div class="glass rounded-lg p-6">
+                            <h3 class="text-lg font-medium mb-2">Economía Total</h3>
+                            <p class="text-3xl font-bold">Cargando...</p>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Nota de Sincronización -->
+                <p class="text-center text-gray-400 mt-4">Sincronizado con el Servidor Seleccionado</p>
+
+                <!-- Sección de Mis Servidores -->
+                <section>
+                    <h2 class="text-xl font-semibold mb-4">Mis Servidores</h2>
+                    <div class="glass rounded-lg p-6">
+                        <div id="serversList" class="flex flex-wrap gap-4">
+                            <!-- Servidores se cargarán dinámicamente aquí -->
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Sección de Comandos -->
+                <section>
+                    <h2 class="text-xl font-semibold mb-4">Comandos</h2>
+                    <div class="glass rounded-lg p-6">
+                        <p class="text-gray-400 mb-4">Instalando comandos de Prefijo y Slash...</p>
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                            <div class="flex flex-col items-center p-4 bg-white/5 rounded-lg">
+                                <i data-lucide="shield" class="w-8 h-8 mb-2"></i>
+                                <span>Moderación</span>
+                            </div>
+                            <div class="flex flex-col items-center p-4 bg-white/5 rounded-lg">
+                                <i data-lucide="ticket" class="w-8 h-8 mb-2"></i>
+                                <span>Tickets</span>
+                            </div>
+                            <div class="flex flex-col items-center p-4 bg-white/5 rounded-lg">
+                                <i data-lucide="users" class="w-8 h-8 mb-2"></i>
+                                <span>Roles</span>
+                            </div>
+                            <div class="flex flex-col items-center p-4 bg-white/5 rounded-lg">
+                                <i data-lucide="clock" class="w-8 h-8 mb-2"></i>
+                                <span>Sesión</span>
+                            </div>
+                            <div class="flex flex-col items-center p-4 bg-white/5 rounded-lg">
+                                <i data-lucide="dollar-sign" class="w-8 h-8 mb-2"></i>
+                                <span>Economía</span>
+                            </div>
+                            <div class="flex flex-col items-center p-4 bg-white/5 rounded-lg">
+                                <i data-lucide="music" class="w-8 h-8 mb-2"></i>
+                                <span>Música</span>
+                            </div>
+                            <div class="flex flex-col items-center p-4 bg-white/5 rounded-lg">
+                                <i data-lucide="tool" class="w-8 h-8 mb-2"></i>
+                                <span>Utilidad</span>
+                            </div>
+                            <div class="flex flex-col items-center p-4 bg-white/5 rounded-lg">
+                                <i data-lucide="smile" class="w-8 h-8 mb-2"></i>
+                                <span>Diversión</span>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+
+            <!-- Pie de página -->
+            <footer class="bg-[#0b0e14] p-4 text-center border-t border-white/10 mt-auto">
+                <p class="text-gray-400">Developed by angel</p>
+            </footer>
+        </main>
+    </div>
+
+    <!-- Inicializar Lucide Icons -->
+    <script>
+        lucide.createIcons();
+    </script>
+
+    <!-- Script para Discord OAuth2 Login y API -->
+    <script>
+        // Configuración de Discord OAuth2
+        const CLIENT_ID = '1496023683385528411';
+        const REDIRECT_URI = 'https://angel9678.github.io/DASHBOARD-BOT-ZAURI/';
+        const AUTH_URL = `https://discord.com/api/oauth2/authorize?client_id=${CLIENT_ID}&response_type=token&redirect_uri=${encodeURIComponent(REDIRECT_URI)}&scope=identify+guilds`;
+
+        // Función para manejar el login
+        function handleLogin() {
+            window.location.href = AUTH_URL;
+        }
+
+        // Función para extraer el token de la URL
+        function getTokenFromURL() {
+            const hash = window.location.hash;
+            if (hash) {
+                const params = new URLSearchParams(hash.substring(1));
+                return params.get('access_token');
+            }
+            return null;
+        }
+
+        // Función para guardar el token
+        function saveToken(token) {
+            localStorage.setItem('zauri_token', token);
+        }
+
+        // Función para obtener el token guardado
+        function getToken() {
+            return localStorage.getItem('zauri_token');
+        }
+
+        // Función para eliminar el token (logout)
+        function logout() {
+            localStorage.removeItem('zauri_token');
+            document.getElementById('loginBtn').textContent = 'Login';
+            document.getElementById('loginBtn').classList.remove('bg-red-600', 'hover:bg-red-700');
+            document.getElementById('loginBtn').classList.add('bg-[#5865f2]', 'hover:bg-[#4752c4]');
+            document.getElementById('loginBtn').onclick = handleLogin;
+            document.getElementById('serversList').innerHTML = '';
+        }
+
+        // Función para obtener datos del usuario
+        async function fetchUserData() {
+            const token = getToken();
+            if (!token) return null;
+
+            try {
+                const response = await fetch('https://discord.com/api/v10/users/@me', {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                if (!response.ok) {
+                    logout();
+                    return null;
+                }
+
+                return await response.json();
+            } catch (error) {
+                console.error('Error fetching user data:', error);
+                logout();
+                return null;
+            }
+        }
+
+        // Función para obtener los servidores del usuario
+        async function fetchUserGuilds() {
+            const token = getToken();
+            if (!token) return [];
+
+            try {
+                const response = await fetch('https://discord.com/api/v10/users/@me/guilds', {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                if (!response.ok) {
+                    logout();
+                    return [];
+                }
+
+                const guilds = await response.json();
+                // Filtrar solo servidores donde el usuario es admin (permiso 0x8)
+                return guilds.filter(guild => (parseInt(guild.owner) === 1 || (guild.permissions & 0x8) === 0x8));
+            } catch (error) {
+                console.error('Error fetching guilds:', error);
+                return [];
+            }
+        }
+
+        // Función para cargar la interfaz
+        async function loadInterface() {
+            const token = getTokenFromURL();
+            
+            if (token) {
+                saveToken(token);
+                // Limpiar la URL removiendo el hash
+                window.history.replaceState({}, document.title, window.location.pathname);
+            }
+
+            const storedToken = getToken();
+            if (!storedToken) return;
+
+            // Obtener datos del usuario
+            const userData = await fetchUserData();
+            if (!userData) return;
+
+            // Actualizar botón de Login con nombre de usuario
+            document.getElementById('loginBtn').textContent = userData.global_name || userData.username;
+            document.getElementById('loginBtn').classList.remove('bg-[#5865f2]', 'hover:bg-[#4752c4]');
+            document.getElementById('loginBtn').classList.add('bg-red-600', 'hover:bg-red-700');
+            document.getElementById('loginBtn').onclick = logout;
+
+            // Obtener y mostrar servidores
+            const guilds = await fetchUserGuilds();
+            const serversList = document.getElementById('serversList');
+            serversList.innerHTML = '';
+
+            if (guilds.length === 0) {
+                serversList.innerHTML = '<p class="text-gray-400">No tienes permisos de administrador en ningún servidor.</p>';
+                return;
+            }
+
+            guilds.forEach(guild => {
+                const iconUrl = guild.icon 
+                    ? `https://cdn.discordapp.com/icons/${guild.id}/${guild.icon}.webp?size=96`
+                    : `https://via.placeholder.com/48?text=${guild.name[0]}`;
+
+                const serverElement = document.createElement('div');
+                serverElement.className = 'flex flex-col items-center gap-2';
+                serverElement.innerHTML = `
+                    <img src="${iconUrl}" alt="${guild.name}" class="w-12 h-12 rounded-full hover:scale-110 transition" title="${guild.name}">
+                    <p class="text-xs text-gray-400 max-w-12 truncate">${guild.name}</p>
+                `;
+                serversList.appendChild(serverElement);
+            });
+        }
+
+        // Cargar la interfaz cuando la página se carga
+        window.addEventListener('DOMContentLoaded', loadInterface);
+    </script>
+</body>
+</html>
