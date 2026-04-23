@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Zauri Bot</title>
+    <!-- Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Tailwind CSS vía CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        /* Estilos adicionales para glassmorphism si es necesario */
+        .glass {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+        }
+    </style>
+</head>
+<body class="bg-slate-900 text-white">
+    <!-- Contenedor principal -->
+    <div class="flex h-screen">
+        <!-- Sidebar lateral fijo -->
+        <aside class="w-64 bg-[#0b0e14] fixed h-full z-10">
+            <div class="p-6">
+                <h2 class="text-xl font-bold mb-8">Zauri Bot</h2>
+                <nav class="space-y-4">
+                    <a href="#" class="flex items-center space-x-3 p-3 rounded-lg hover:bg-white/10 transition">
+                        <i data-lucide="home" class="w-5 h-5"></i>
+                        <span>Inicio</span>
+                    </a>
+                    <a href="#" class="flex items-center space-x-3 p-3 rounded-lg hover:bg-white/10 transition">
+                        <i data-lucide="dollar-sign" class="w-5 h-5"></i>
+                        <span>Economía</span>
+                    </a>
+                    <a href="#" class="flex items-center space-x-3 p-3 rounded-lg hover:bg-white/10 transition">
+                        <i data-lucide="user-plus" class="w-5 h-5"></i>
+                        <span>Invitaciones</span>
+                    </a>
+                    <a href="#" class="flex items-center space-x-3 p-3 rounded-lg hover:bg-white/10 transition">
+                        <i data-lucide="help-circle" class="w-5 h-5"></i>
+                        <span>Soporte</span>
+                    </a>
+                </nav>
+            </div>
+        </aside>
+
+        <!-- Área de contenido principal -->
+        <main class="flex-1 bg-[#0f172a] ml-64">
+            <!-- Header -->
+            <header class="bg-[#0b0e14] p-4 flex justify-between items-center border-b border-white/10">
+                <h1 class="text-2xl font-semibold">Dashboard Zauri Bot</h1>
+                <button class="bg-[#5865f2] hover:bg-[#4752c4] text-white px-4 py-2 rounded-lg font-medium transition">
+                    Login
+                </button>
+            </header>
+
+            <!-- Contenido -->
+            <div class="p-6 space-y-8">
+                <!-- Sección de Bienvenida -->
+                <section class="text-center">
+                    <h2 class="text-3xl font-bold mb-4">Zauri Bot Dashboard</h2>
+                    <p class="text-gray-400">Bienvenido al panel de control de Zauri Bot. Aquí puedes monitorear estadísticas, invitaciones y más.</p>
+                </section>
+
+                <!-- Sección de Estadísticas Básicas -->
+                <section>
+                    <h2 class="text-xl font-semibold mb-4">Estadísticas Básicas</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <!-- Tarjeta 1 -->
+                        <div class="glass rounded-lg p-6">
+                            <h3 class="text-lg font-medium mb-2">Total Usuarios</h3>
+                            <p class="text-3xl font-bold">1,234</p>
+                        </div>
+                        <!-- Tarjeta 2 -->
+                        <div class="glass rounded-lg p-6">
+                            <h3 class="text-lg font-medium mb-2">Invitaciones Totales</h3>
+                            <p class="text-3xl font-bold">567</p>
+                        </div>
+                        <!-- Tarjeta 3 -->
+                        <div class="glass rounded-lg p-6">
+                            <h3 class="text-lg font-medium mb-2">Economía Total</h3>
+                            <p class="text-3xl font-bold">$12,345</p>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Sección de Top Invitadores -->
+                <section>
+                    <h2 class="text-xl font-semibold mb-4">Top Invitadores</h2>
+                    <div class="glass rounded-lg p-6">
+                        <table class="w-full text-left">
+                            <thead>
+                                <tr class="border-b border-white/10">
+                                    <th class="py-2">Posición</th>
+                                    <th class="py-2">Usuario</th>
+                                    <th class="py-2">Invitaciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr class="border-b border-white/10">
+                                    <td class="py-2">1</td>
+                                    <td class="py-2">Usuario1</td>
+                                    <td class="py-2">150</td>
+                                </tr>
+                                <tr class="border-b border-white/10">
+                                    <td class="py-2">2</td>
+                                    <td class="py-2">Usuario2</td>
+                                    <td class="py-2">120</td>
+                                </tr>
+                                <tr class="border-b border-white/10">
+                                    <td class="py-2">3</td>
+                                    <td class="py-2">Usuario3</td>
+                                    <td class="py-2">100</td>
+                                </tr>
+                                <!-- Añade más filas según sea necesario -->
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+            </div>
+
+            <!-- Pie de página -->
+            <footer class="bg-[#0b0e14] p-4 text-center border-t border-white/10 mt-auto">
+                <p class="text-gray-400">Developed by angel</p>
+            </footer>
+        </main>
+    </div>
+
+    <!-- Inicializar Lucide Icons -->
+    <script>
+        lucide.createIcons();
+    </script>
+</body>
+</html>
+```
