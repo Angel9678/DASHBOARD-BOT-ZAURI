@@ -3,154 +3,131 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=0.6">
-    <title>Dashboard Zauri Bot</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <title>Zauri Dashboard Pro</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
     <style>
-        body { font-family: 'Inter', sans-serif; background-color: #0f172a; }
-        .glass {
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-        }
-        /* Scrollbar personalizada para que se vea pro */
-        ::-webkit-scrollbar { width: 8px; }
-        ::-webkit-scrollbar-track { background: #0b0e14; }
-        ::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 10px; }
-        ::-webkit-scrollbar-thumb:hover { background: #5865f2; }
+        .glass { background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.1); }
+        .switch { position: relative; display: inline-block; width: 50px; height: 26px; }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #334155; transition: .4s; border-radius: 34px; }
+        .slider:before { position: absolute; content: ""; height: 18px; width: 18px; left: 4px; bottom: 4px; background-color: white; transition: .4s; border-radius: 50%; }
+        input:checked + .slider { background-color: #5865f2; }
+        input:checked + .slider:before { transform: translateX(24px); }
     </style>
 </head>
-<body class="bg-slate-900 text-white overflow-x-hidden">
+<body class="bg-[#0f172a] text-slate-200 overflow-hidden">
     <div class="flex h-screen">
-        <aside class="w-64 bg-[#0b0e14] fixed h-full z-10 border-r border-white/5">
-            <div class="p-6">
-                <h2 class="text-2xl font-bold mb-8 text-[#5865f2] flex items-center gap-2">
-                    <i data-lucide="bot"></i> Zauri
-                </h2>
-                <nav class="space-y-4">
-                    <a href="#" class="flex items-center space-x-3 p-3 rounded-xl hover:bg-white/10 transition-all text-white bg-white/5">
-                        <i data-lucide="layout-dashboard" class="w-5 h-5"></i>
-                        <span>Inicio</span>
-                    </a>
-                    <a href="#" class="flex items-center space-x-3 p-3 rounded-xl hover:bg-white/10 transition-all text-gray-400" onclick="alert('Próximamente: Configuración de Comandos')">
-                        <i data-lucide="terminal" class="w-5 h-5"></i>
-                        <span>Comandos</span>
-                    </a>
-                    <div class="pt-10">
-                        <a href="https://discord.gg/zauri" target="_blank" class="flex items-center justify-center space-x-3 p-3 rounded-xl bg-[#5865f2] hover:bg-[#4752c4] transition-all text-white font-bold shadow-lg shadow-indigo-500/20">
-                            <i data-lucide="help-circle" class="w-5 h-5"></i>
-                            <span>Soporte</span>
-                        </a>
-                    </div>
-                </nav>
-            </div>
-            <div class="absolute bottom-6 left-6 text-[10px] text-gray-500 font-mono">
-                v1.0.4 | by angel
-            </div>
+        <aside class="w-64 bg-[#0b0e14] border-r border-white/5 p-6 flex flex-col">
+            <h2 class="text-2xl font-bold text-[#5865f2] mb-10 flex items-center gap-2"><i data-lucide="bot"></i> Zauri Bot</h2>
+            <nav class="space-y-2 flex-1">
+                <button onclick="changeTab('home')" class="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-white/5 transition active-tab" id="nav-home">
+                    <i data-lucide="layout-grid"></i> Inicio
+                </button>
+                <button onclick="changeTab('config')" class="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-white/5 transition" id="nav-config">
+                    <i data-lucide="sliders-horizontal"></i> Configuración
+                </button>
+                <a href="https://discord.gg/zauri" target="_blank" class="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-white/5 transition">
+                    <i data-lucide="help-circle"></i> Soporte
+                </a>
+            </nav>
+            <div class="text-[10px] text-slate-600 font-mono text-center">ANGEL DEVELOPER © 2026</div>
         </aside>
 
-        <main class="flex-1 bg-[#0f172a] ml-64 min-h-screen">
-            <header class="bg-[#0b0e14]/80 backdrop-blur-md p-4 flex justify-between items-center border-b border-white/5 sticky top-0 z-20">
-                <h1 id="panelTitle" class="text-xl font-semibold text-slate-300">Dashboard</h1>
-                <button id="loginBtn" class="bg-white/5 hover:bg-white/10 border border-white/10 text-white px-5 py-2 rounded-full font-medium transition flex items-center gap-2" onclick="handleLogin()">
-                    <i data-lucide="log-in" class="w-4 h-4 text-[#5865f2]"></i>
-                    <span id="btnText">Login con Discord</span>
+        <main class="flex-1 flex flex-col overflow-y-auto">
+            <header class="p-6 bg-[#0b0e14]/50 border-b border-white/5 flex justify-between items-center sticky top-0 z-50">
+                <h1 class="text-xl font-semibold" id="main-title">Dashboard de Inicio</h1>
+                <button id="loginBtn" onclick="handleLogin()" class="bg-[#5865f2] hover:bg-[#4752c4] px-5 py-2 rounded-lg font-bold transition flex items-center gap-2">
+                    <i data-lucide="log-in"></i> Login con Discord
                 </button>
             </header>
 
-            <div class="p-8 space-y-10 max-w-6xl mx-auto">
-                <section class="text-center py-4">
-                    <h2 class="text-4xl font-black mb-4 tracking-tight">ZAURI BOT <span class="text-[#5865f2]">PANEL</span></h2>
-                    <p class="text-gray-400 max-w-md mx-auto">Gestiona tu servidor de Nuevo León y el bot de RP desde la palma de tu mano.</p>
-                </section>
-
-                <section class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    <div class="glass rounded-3xl p-8 relative overflow-hidden group hover:border-[#5865f2]/50 transition-colors">
-                        <h3 class="text-gray-400 text-xs font-bold uppercase tracking-widest mb-1">Total Usuarios</h3>
-                        <p class="text-4xl font-bold tracking-tighter tabular-nums" id="stat-users">---</p>
-                        <i data-lucide="users" class="absolute -right-2 -bottom-2 w-16 h-16 opacity-5 group-hover:opacity-10 transition-opacity"></i>
-                    </div>
-                    <div class="glass rounded-3xl p-8 relative overflow-hidden group hover:border-green-500/50 transition-colors">
-                        <h3 class="text-gray-400 text-xs font-bold uppercase tracking-widest mb-1">Invitaciones</h3>
-                        <p class="text-4xl font-bold tracking-tighter tabular-nums" id="stat-invites">---</p>
-                        <i data-lucide="mail" class="absolute -right-2 -bottom-2 w-16 h-16 opacity-5 group-hover:opacity-10 transition-opacity"></i>
-                    </div>
-                    <div class="glass rounded-3xl p-8 relative overflow-hidden group hover:border-amber-500/50 transition-colors">
-                        <h3 class="text-gray-400 text-xs font-bold uppercase tracking-widest mb-1">Economía</h3>
-                        <p class="text-4xl font-bold tracking-tighter tabular-nums" id="stat-eco">---</p>
-                        <i data-lucide="coins" class="absolute -right-2 -bottom-2 w-16 h-16 opacity-5 group-hover:opacity-10 transition-opacity"></i>
-                    </div>
-                </section>
-
+            <div class="p-8 space-y-10" id="home-content">
                 <section>
-                    <h2 class="text-xl font-bold mb-6 flex items-center gap-2">
-                        <i data-lucide="server" class="w-5 h-5 text-[#5865f2]"></i> Servidores con Acceso
-                    </h2>
+                    <h2 class="text-lg font-bold mb-6 flex items-center gap-2"><i data-lucide="server"></i> Mis Servidores</h2>
                     <div class="glass rounded-3xl p-8">
                         <div id="serversList" class="flex flex-wrap gap-6 justify-center md:justify-start">
-                            <p class="text-gray-500 text-sm italic">Inicia sesión para cargar tus servidores con permisos de Administrador.</p>
+                            <p class="text-slate-500 italic">Inicia sesión para cargar tus servidores...</p>
                         </div>
                     </div>
                 </section>
 
-                <section>
-                    <h2 class="text-xl font-bold mb-6">Módulos del Bot</h2>
-                    <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
-                        <div class="glass p-6 rounded-2xl flex flex-col items-center gap-3 hover:bg-white/10 transition cursor-pointer">
-                            <i data-lucide="shield-check" class="w-10 h-10 text-red-400"></i>
-                            <span class="font-bold text-sm">Moderación</span>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div class="glass p-6 rounded-2xl">
+                        <h3 class="text-xs text-slate-500 font-bold uppercase">Usuarios Totales</h3>
+                        <p class="text-3xl font-black mt-2">Cargando...</p>
+                    </div>
+                    <div class="glass p-6 rounded-2xl text-[#5865f2]">
+                        <h3 class="text-xs text-slate-500 font-bold uppercase">Estado</h3>
+                        <p class="text-3xl font-black mt-2">Online</p>
+                    </div>
+                    <div class="glass p-6 rounded-2xl">
+                        <h3 class="text-xs text-slate-500 font-bold uppercase">Comandos Usados</h3>
+                        <p class="text-3xl font-black mt-2">---</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="p-8 space-y-10 hidden" id="config-content">
+                <section class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="glass p-6 rounded-2xl flex justify-between items-center">
+                        <div>
+                            <h4 class="font-bold">Módulo de Economía</h4>
+                            <p class="text-xs text-slate-500">Activa comandos de banco y dinero.</p>
                         </div>
-                        <div class="glass p-6 rounded-2xl flex flex-col items-center gap-3 hover:bg-white/10 transition cursor-pointer">
-                            <i data-lucide="ticket" class="w-10 h-10 text-blue-400"></i>
-                            <span class="font-bold text-sm">Tickets</span>
+                        <label class="switch"><input type="checkbox" checked><span class="slider"></span></label>
+                    </div>
+                    <div class="glass p-6 rounded-2xl flex justify-between items-center">
+                        <div>
+                            <h4 class="font-bold">Módulo de Verificación</h4>
+                            <p class="text-xs text-slate-500">Sistema automático de acceso.</p>
                         </div>
-                        <div class="glass p-6 rounded-2xl flex flex-col items-center gap-3 hover:bg-white/10 transition cursor-pointer">
-                            <i data-lucide="user-plus" class="w-10 h-10 text-green-400"></i>
-                            <span class="font-bold text-sm">Roles</span>
+                        <label class="switch"><input type="checkbox"><span class="slider"></span></label>
+                    </div>
+                </section>
+
+                <section class="glass p-8 rounded-3xl space-y-4 border-l-4 border-[#5865f2]">
+                    <h3 class="font-bold flex items-center gap-2"><i data-lucide="megaphone"></i> Sistema de Bienvenida</h3>
+                    <textarea class="w-full bg-black/20 border border-white/10 rounded-xl p-4 text-sm" rows="3" placeholder="Ej: ¡Hola {user}, bienvenido a {server}!"></textarea>
+                    <div class="flex flex-wrap gap-4">
+                        <div class="flex-1 min-w-[200px]">
+                            <label class="text-xs text-slate-500 font-bold">ID ROL VERIFICACIÓN</label>
+                            <input type="text" class="w-full bg-black/20 border border-white/10 rounded-lg p-2 mt-1 text-sm" placeholder="ID del rol">
                         </div>
-                        <div class="glass p-6 rounded-2xl flex flex-col items-center gap-3 hover:bg-white/10 transition cursor-pointer">
-                            <i data-lucide="banknote" class="w-10 h-10 text-amber-500"></i>
-                            <span class="font-bold text-sm">Economía</span>
+                        <div class="flex-1 min-w-[200px]">
+                            <label class="text-xs text-slate-500 font-bold">CANAL DE LOGS</label>
+                            <input type="text" class="w-full bg-black/20 border border-white/10 rounded-lg p-2 mt-1 text-sm" placeholder="ID del canal">
                         </div>
                     </div>
                 </section>
+
+                <button onclick="alert('Configuración guardada (Enviando datos al bot...)')" class="bg-[#5865f2] hover:bg-[#4752c4] w-full py-4 rounded-2xl font-bold text-white shadow-xl shadow-indigo-500/10">
+                    GUARDAR CAMBIOS EN EL BOT
+                </button>
             </div>
-            
-            <footer class="p-8 text-center text-gray-600 text-sm">
-                Desarrollado por <span class="text-gray-400 font-bold underline decoration-[#5865f2]">angel</span> &copy; 2026
-            </footer>
         </main>
     </div>
 
     <script>
         lucide.createIcons();
 
-        // 1. CONFIGURACIÓN DEL PORTAL DE DISCORD
         const CLIENT_ID = '1496023683385528411';
         const REDIRECT_URI = 'https://angel9678.github.io/DASHBOARD-BOT-ZAURI/';
         const AUTH_URL = `https://discord.com/api/oauth2/authorize?client_id=${CLIENT_ID}&redirect_uri=${encodeURIComponent(REDIRECT_URI)}&response_type=token&scope=identify+guilds`;
 
-        function handleLogin() {
-            window.location.href = AUTH_URL;
+        function handleLogin() { window.location.href = AUTH_URL; }
+
+        function changeTab(tab) {
+            document.getElementById('home-content').classList.toggle('hidden', tab !== 'home');
+            document.getElementById('config-content').classList.toggle('hidden', tab !== 'config');
+            document.getElementById('main-title').textContent = tab === 'home' ? 'Dashboard de Inicio' : 'Configuración del Bot';
         }
 
-        function logout() {
-            localStorage.removeItem('zauri_token');
-            window.location.href = REDIRECT_URI;
-        }
-
-        // 2. LÓGICA DE CARGA AUTOMÁTICA
         async function loadInterface() {
-            // Revisar si Discord nos devolvió el Token en la URL
             const hash = window.location.hash;
             if (hash.includes('access_token')) {
                 const params = new URLSearchParams(hash.substring(1));
-                const token = params.get('access_token');
-                localStorage.setItem('zauri_token', token);
-                // Limpiar la URL para que se vea bonita
+                localStorage.setItem('zauri_token', params.get('access_token'));
                 window.history.replaceState({}, document.title, window.location.pathname);
             }
 
@@ -158,54 +135,36 @@
             if (!token) return;
 
             try {
-                // Obtener perfil del usuario
-                const userRes = await fetch('https://discord.com/api/users/@me', {
-                    headers: { Authorization: `Bearer ${token}` }
-                });
+                const userRes = await fetch('https://discord.com/api/users/@me', { headers: { Authorization: `Bearer ${token}` } });
                 const user = await userRes.json();
-                
                 if (user.username) {
-                    document.getElementById('btnText').textContent = user.username;
-                    document.getElementById('panelTitle').textContent = `Panel de Control / ${user.username}`;
-                    document.getElementById('loginBtn').onclick = logout;
-                    document.getElementById('loginBtn').classList.add('border-red-500/30', 'text-red-400');
+                    document.getElementById('loginBtn').textContent = user.username;
+                    document.getElementById('loginBtn').onclick = () => { localStorage.removeItem('zauri_token'); window.location.reload(); };
                 }
 
-                // Obtener servidores
-                const guildsRes = await fetch('https://discord.com/api/users/@me/guilds', {
-                    headers: { Authorization: `Bearer ${token}` }
-                });
+                const guildsRes = await fetch('https://discord.com/api/users/@me/guilds', { headers: { Authorization: `Bearer ${token}` } });
                 const guilds = await guildsRes.json();
                 
-                // Filtrar donde eres Administrador
-                const adminGuilds = guilds.filter(g => (g.permissions & 0x8) === 0x8);
+                // LÓGICA DE PERMISOS MEJORADA: Dueño o Administrador o Gestionar Server
+                const adminGuilds = guilds.filter(g => g.owner === true || (g.permissions & 0x8) === 0x8 || (g.permissions & 0x20) === 0x20);
+                
                 const list = document.getElementById('serversList');
                 list.innerHTML = '';
 
                 if (adminGuilds.length === 0) {
-                    list.innerHTML = '<p class="text-gray-500">No se encontraron servidores donde seas Administrador.</p>';
+                    list.innerHTML = '<p class="text-slate-500">No se detectaron servidores donde tengas permisos de Admin.</p>';
                 }
 
                 adminGuilds.forEach(guild => {
                     const icon = guild.icon ? `https://cdn.discordapp.com/icons/${guild.id}/${guild.icon}.png` : 'https://cdn.discordapp.com/embed/avatars/0.png';
                     list.innerHTML += `
-                        <div class="flex flex-col items-center gap-3 group animate-in fade-in duration-500">
-                            <div class="relative">
-                                <img src="${icon}" class="w-16 h-16 rounded-2xl shadow-xl border-2 border-transparent group-hover:border-[#5865f2] group-hover:scale-110 transition-all duration-300 cursor-pointer" title="${guild.name}">
-                                <div class="absolute -top-1 -right-1 w-4 h-4 bg-green-500 border-2 border-[#0f172a] rounded-full"></div>
-                            </div>
-                            <span class="text-[10px] font-bold text-gray-500 uppercase tracking-tighter truncate w-16 text-center">${guild.name}</span>
-                        </div>
-                    `;
+                        <div class="flex flex-col items-center gap-2 group">
+                            <img src="${icon}" class="w-16 h-16 rounded-2xl border-2 border-transparent group-hover:border-[#5865f2] group-hover:scale-110 transition cursor-pointer" title="${guild.name}">
+                            <span class="text-[9px] font-bold text-slate-500 uppercase truncate w-16 text-center">${guild.name}</span>
+                        </div>`;
                 });
-
-            } catch (err) {
-                console.error("Error cargando sesión:", err);
-                localStorage.removeItem('zauri_token');
-            }
+            } catch (err) { console.error(err); localStorage.removeItem('zauri_token'); }
         }
-
-        // Ejecutar al cargar la página
         window.addEventListener('DOMContentLoaded', loadInterface);
     </script>
 </body>
