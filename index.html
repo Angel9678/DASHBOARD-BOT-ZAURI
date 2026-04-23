@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=0.6">
-    <title>Zauri Bot | Panel de Control</title>
+    <title>Zauri Bot | Dashboard Pro</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script type="module">
         import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js';
@@ -22,38 +22,36 @@
         const db = getDatabase(app);
         let selectedServerId = null;
 
-        // Función para seleccionar un servidor y cargar sus datos
+        // Función para cargar la configuración del servidor seleccionado
         window.selectServer = async function(guildId, guildName) {
             selectedServerId = guildId;
             document.getElementById('selected-server-name').innerText = guildName;
             showSection('comandos');
             
-            // Intentar cargar configuración existente de este servidor desde Firebase
             const snapshot = await get(ref(db, `servidores/${guildId}/config`));
             if (snapshot.exists()) {
                 const data = snapshot.val();
-                document.getElementById('toggle-bal').checked = data.bal ?? true;
-                document.getElementById('toggle-work').checked = data.work ?? true;
-                document.getElementById('toggle-kick').checked = data.kick ?? true;
-                document.getElementById('welcome-message').value = data.welcomeMessage || "";
+                // Marcamos los checkboxes según lo guardado o true por defecto
+                const checks = document.querySelectorAll('input[type="checkbox"]');
+                checks.forEach(c => c.checked = data[c.id] !== undefined ? data[c.id] : true);
+                
+                document.getElementById('welcome-msg').value = data.welcomeMsg || "";
+                document.getElementById('verification-role').value = data.verificationRole || "";
             }
         };
 
-        // Guardar configuración específica del servidor seleccionado
         window.finalSave = async function() {
-            if (!selectedServerId) return alert("Por favor, selecciona un servidor primero.");
-
-            const config = {
-                bal: document.getElementById('toggle-bal').checked,
-                work: document.getElementById('toggle-work').checked,
-                kick: document.getElementById('toggle-kick').checked,
-                welcomeMessage: document.getElementById('welcome-message').value,
-                updatedAt: new Date().getTime()
-            };
+            if (!selectedServerId) return alert("Selecciona un servidor primero.");
+            
+            const config = { updatedAt: new Date().getTime() };
+            const inputs = document.querySelectorAll('input[type="checkbox"], textarea, input[type="text"]');
+            inputs.forEach(i => {
+                if(i.id) config[i.id] = i.type === 'checkbox' ? i.checked : i.value;
+            });
 
             try {
                 await set(ref(db, `servidores/${selectedServerId}/config`), config);
-                alert(`✅ Configuración guardada para el servidor ${selectedServerId}`);
+                alert(`✅ ¡Configuración sincronizada para ${selectedServerId}!`);
             } catch (e) { alert('❌ Error: ' + e.message); }
         };
     </script>
@@ -61,79 +59,97 @@
     <style>
         body { font-family: 'Inter', sans-serif; background-color: #0b0e14; color: white; }
         .glass { background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255,255,255,0.05); backdrop-filter: blur(10px); }
-        .toggle-switch { appearance: none; width: 40px; height: 20px; background: #2d3748; border-radius: 20px; position: relative; cursor: pointer; transition: 0.3s; }
+        .toggle-switch { appearance: none; width: 38px; height: 18px; background: #2d3748; border-radius: 20px; position: relative; cursor: pointer; transition: 0.3s; flex-shrink: 0; }
         .toggle-switch:checked { background: #5865f2; }
-        .toggle-switch::before { content: ''; position: absolute; width: 14px; height: 14px; background: white; border-radius: 50%; top: 3px; left: 4px; transition: 0.3s; }
-        .toggle-switch:checked::before { left: 22px; }
+        .toggle-switch::before { content: ''; position: absolute; width: 12px; height: 12px; background: white; border-radius: 50%; top: 3px; left: 3px; transition: 0.3s; }
+        .toggle-switch:checked::before { left: 23px; }
+        .cmd-row { display: flex; justify-content: space-between; align-items: center; padding: 10px; background: rgba(255,255,255,0.03); border-radius: 12px; margin-bottom: 8px; }
         .hidden { display: none; }
     </style>
 </head>
 <body>
     <div class="flex h-screen overflow-hidden">
         <aside class="w-64 bg-[#080a0f] border-r border-white/5 p-6 flex flex-col">
-            <h2 class="text-xl font-bold text-[#5865f2] mb-10 flex items-center gap-2"><i data-lucide="layout"></i> Zauri Panel</h2>
+            <h2 class="text-xl font-bold text-[#5865f2] mb-10 flex items-center gap-2"><i data-lucide="bot"></i> Zauri Bot</h2>
             <nav class="space-y-2 flex-1">
                 <button onclick="showSection('inicio')" class="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-white/5 text-gray-400 hover:text-white transition-all"><i data-lucide="server"></i> Servidores</button>
-                <button onclick="showSection('comandos')" id="btn-nav-cmds" class="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-white/5 text-gray-400 hover:text-white transition-all"><i data-lucide="terminal"></i> Comandos</button>
+                <button onclick="showSection('comandos')" class="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-white/5 text-gray-400 hover:text-white transition-all"><i data-lucide="sliders"></i> Comandos</button>
             </nav>
+            <div class="text-[10px] opacity-30 text-center uppercase tracking-widest">Angel AGGB</div>
         </aside>
 
         <main class="flex-1 overflow-y-auto p-8">
-            <header class="flex justify-between items-center mb-10">
+            <header class="flex justify-between items-center mb-8">
                 <div>
-                    <h1 id="section-title" class="text-2xl font-bold">Seleccionar Servidor</h1>
-                    <p id="selected-server-display" class="text-xs text-slate-500 mt-1">Editando: <span id="selected-server-name" class="text-[#5865f2]">Ninguno</span></p>
-                </div>
-                <div id="user-profile" class="flex items-center gap-3 glass px-4 py-2 rounded-full hidden">
-                    <img id="avatar" class="w-7 h-7 rounded-full border border-white/10">
-                    <span id="username" class="text-sm font-medium"></span>
+                    <h1 id="section-title" class="text-2xl font-bold">Mis Servidores</h1>
+                    <p class="text-xs text-gray-500">Editando: <span id="selected-server-name" class="text-[#5865f2] font-bold">Ninguno</span></p>
                 </div>
                 <button id="loginBtn" onclick="handleLogin()" class="bg-[#5865f2] px-6 py-2 rounded-full font-bold text-sm">Login con Discord</button>
             </header>
 
-            <div id="inicio-section" class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                </div>
+            <div id="inicio-section" class="grid grid-cols-1 md:grid-cols-3 gap-6"></div>
 
-            <div id="comandos-section" class="hidden space-y-6 max-w-4xl">
+            <div id="comandos-section" class="hidden space-y-8 pb-20">
+                
                 <div class="glass p-6 rounded-3xl">
-                    <h3 class="text-sm font-bold text-slate-500 uppercase mb-6 tracking-tighter">Interruptores de Comandos</h3>
-                    
-                    <div class="space-y-4">
-                        <div class="flex justify-between items-center p-3 bg-white/5 rounded-2xl">
-                            <span class="text-sm">Comando <b>/balance</b> (bal)</span>
-                            <input type="checkbox" id="toggle-bal" class="toggle-switch" checked>
-                        </div>
-                        <div class="flex justify-between items-center p-3 bg-white/5 rounded-2xl">
-                            <span class="text-sm">Comando <b>/work</b></span>
-                            <input type="checkbox" id="toggle-work" class="toggle-switch" checked>
-                        </div>
-                        <div class="flex justify-between items-center p-3 bg-white/5 rounded-2xl border-t border-white/5 pt-4">
-                            <span class="text-sm text-red-400">Comando <b>/kick</b> (Admin)</span>
-                            <input type="checkbox" id="toggle-kick" class="toggle-switch" checked>
-                        </div>
+                    <h3 class="text-yellow-500 font-bold mb-4 flex items-center gap-2"><i data-lucide="coins"></i> Economía Global</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6">
+                        <div class="cmd-row"><span>/balance (bal)</span> <input type="checkbox" id="cmd-bal" class="toggle-switch"></div>
+                        <div class="cmd-row"><span>/work</span> <input type="checkbox" id="cmd-work" class="toggle-switch"></div>
+                        <div class="cmd-row"><span>/collect</span> <input type="checkbox" id="cmd-collect" class="toggle-switch"></div>
+                        <div class="cmd-row"><span>/rob</span> <input type="checkbox" id="cmd-rob" class="toggle-switch"></div>
+                        <div class="cmd-row"><span>/dep & /with</span> <input type="checkbox" id="cmd-money-move" class="toggle-switch"></div>
+                        <div class="cmd-row text-red-400 font-bold"><span>Comandos Admin Eco</span> <input type="checkbox" id="cmd-admin-eco" class="toggle-switch"></div>
                     </div>
                 </div>
 
                 <div class="glass p-6 rounded-3xl">
-                    <h3 class="text-sm font-bold text-slate-500 uppercase mb-4">Mensaje de Bienvenida del Servidor</h3>
-                    <textarea id="welcome-message" class="w-full bg-black/20 border border-white/10 rounded-2xl p-4 text-sm outline-none focus:border-[#5865f2]" rows="3"></textarea>
+                    <h3 class="text-red-500 font-bold mb-4 flex items-center gap-2"><i data-lucide="shield"></i> Moderación</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6">
+                        <div class="cmd-row"><span>/kick</span> <input type="checkbox" id="cmd-kick" class="toggle-switch"></div>
+                        <div class="cmd-row"><span>/ban & /unban</span> <input type="checkbox" id="cmd-ban" class="toggle-switch"></div>
+                        <div class="cmd-row"><span>/mute & /unmute</span> <input type="checkbox" id="cmd-mute" class="toggle-switch"></div>
+                    </div>
                 </div>
 
-                <button onclick="finalSave()" class="w-full bg-[#5865f2] py-4 rounded-2xl font-bold shadow-lg shadow-indigo-500/20 active:scale-95 transition">
-                    Guardar Cambios en este Servidor
-                </button>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="glass p-6 rounded-3xl">
+                        <h3 class="text-purple-400 font-bold mb-4 flex items-center gap-2"><i data-lucide="music"></i> Música</h3>
+                        <div class="cmd-row"><span>Habilitar Sistema</span> <input type="checkbox" id="module-music" class="toggle-switch"></div>
+                    </div>
+                    <div class="glass p-6 rounded-3xl">
+                        <h3 class="text-blue-400 font-bold mb-4 flex items-center gap-2"><i data-lucide="wrench"></i> Utilidad</h3>
+                        <div class="cmd-row"><span>Habilitar Comandos</span> <input type="checkbox" id="module-util" class="toggle-switch"></div>
+                    </div>
+                </div>
+
+                <div class="glass p-6 rounded-3xl space-y-6">
+                    <h3 class="text-green-400 font-bold flex items-center gap-2"><i data-lucide="user-plus"></i> Ingresos & Seguridad</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label class="text-[10px] uppercase font-bold text-gray-500">Mensaje Bienvenida/Despedida</label>
+                            <textarea id="welcome-msg" class="w-full bg-black/30 border border-white/5 rounded-xl p-3 mt-2 text-sm outline-none" rows="3"></textarea>
+                        </div>
+                        <div class="space-y-4">
+                            <div class="cmd-row"><span>Verificación Automática</span> <input type="checkbox" id="verify-auto" class="toggle-switch"></div>
+                            <div class="cmd-row"><span>Verificación por Formulario</span> <input type="checkbox" id="verify-form" class="toggle-switch"></div>
+                            <input type="text" id="verification-role" placeholder="ID del Rol a entregar" class="w-full bg-black/30 border border-white/5 rounded-xl p-3 text-sm outline-none">
+                        </div>
+                    </div>
+                </div>
+
+                <button onclick="finalSave()" class="w-full bg-[#5865f2] py-5 rounded-2xl font-black uppercase tracking-widest shadow-xl active:scale-95 transition-all">Sincronizar con Zauri Bot</button>
             </div>
         </main>
     </div>
 
     <script>
         lucide.createIcons();
-
         function showSection(id) {
             document.getElementById('inicio-section').classList.add('hidden');
             document.getElementById('comandos-section').classList.add('hidden');
             document.getElementById(id + '-section').classList.remove('hidden');
-            document.getElementById('section-title').innerText = id === 'inicio' ? 'Seleccionar Servidor' : 'Gestión de Comandos';
+            document.getElementById('section-title').innerText = id === 'inicio' ? 'Mis Servidores' : 'Gestión de Comandos';
         }
 
         const CLIENT_ID = '1496023683385528411';
@@ -146,29 +162,16 @@
         window.onload = () => {
             const params = new URLSearchParams(window.location.hash.slice(1));
             const token = params.get('access_token');
-
             if (token) {
-                // Obtener perfil
-                fetch('https://discord.com/api/users/@me', { headers: { Authorization: `Bearer ${token}` }})
-                    .then(r => r.json()).then(user => {
-                        document.getElementById('user-profile').classList.remove('hidden');
-                        document.getElementById('username').innerText = user.username;
-                        document.getElementById('avatar').src = `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png`;
-                        document.getElementById('loginBtn').classList.add('hidden');
-                    });
-
-                // Obtener Servidores
+                document.getElementById('loginBtn').innerText = "Conectado";
                 fetch('https://discord.com/api/users/@me/guilds', { headers: { Authorization: `Bearer ${token}` }})
                     .then(r => r.json()).then(guilds => {
                         const container = document.getElementById('inicio-section');
-                        // Filtrar servidores donde soy Admin (permiso 0x8)
                         const adminGuilds = guilds.filter(g => (g.permissions & 0x8) === 0x8);
-                        
                         container.innerHTML = adminGuilds.map(g => `
                             <div onclick="selectServer('${g.id}', '${g.name}')" class="glass p-6 rounded-3xl flex flex-col items-center gap-4 hover:border-[#5865f2] transition-all cursor-pointer group">
                                 <img class="w-16 h-16 rounded-2xl shadow-lg group-hover:scale-110 transition" src="https://cdn.discordapp.com/icons/${g.id}/${g.icon}.png" onerror="this.src='https://ui-avatars.com/api/?name=${g.name}'">
-                                <h4 class="font-bold text-center text-sm">${g.name}</h4>
-                                <span class="text-[10px] text-[#5865f2] font-bold uppercase tracking-widest">Configurar</span>
+                                <h4 class="font-bold text-sm">${g.name}</h4>
                             </div>
                         `).join('');
                     });
