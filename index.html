@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=0.6">
+    <title>Dashboard Zauri Bot</title>
+    <!-- Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Tailwind CSS vía CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        /* Estilos adicionales para glassmorphism si es necesario */
+        .glass {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+        }
+    </style>
+</head>
+<body class="bg-slate-900 text-white">
+    <!-- Contenedor principal -->
+    <div class="flex h-screen">
+        <!-- Sidebar lateral fijo -->
+        <aside class="w-64 bg-[#0b0e14] fixed h-full z-10">
+            <div class="p-6">
+                <h2 class="text-xl font-bold mb-8">Zauri Bot</h2>
+                <nav class="space-y-4">
+                    <a href="#" class="flex items-center space-x-3 p-3 rounded-lg hover:bg-white/10 hover:translate-x-2 transition-all">
+                        <i data-lucide="home" class="w-5 h-5"></i>
+                        <span>Inicio</span>
+                    </a>
+                    <a href="#" class="flex items-center space-x-3 p-3 rounded-lg hover:bg-white/10 hover:translate-x-2 transition-all" onclick="alert('En desarrollo')">
+                        <i data-lucide="settings" class="w-5 h-5"></i>
+                        <span>Comandos</span>
+                    </a>
+                    <button class="bg-[#5865f2] hover:bg-[#4752c4] hover:shadow-lg text-white px-4 py-2 rounded-lg font-medium transition w-full text-left" onclick="window.location.href='https://discord.gg/zauri'">
+                        <i data-lucide="help-circle" class="w-5 h-5 inline mr-2"></i>
+                        Soporte
+                    </button>
+                </nav>
+            </div>
+        </aside>
+
+        <!-- Área de contenido principal -->
+        <main class="flex-1 bg-[#0f172a] ml-64">
+            <!-- Header -->
+            <header class="bg-[#0b0e14] p-4 flex justify-between items-center border-b border-white/10">
+                <h1 class="text-2xl font-semibold">Dashboard Zauri Bot</h1>
+                <button class="bg-[#5865f2] hover:bg-[#4752c4] hover:shadow-lg text-white px-4 py-2 rounded-lg font-medium transition" onclick="alert('Redirigiendo a login...')">
+                    Login
+                </button>
+            </header>
+
+            <!-- Contenido -->
+            <div class="p-6 space-y-8">
+                <!-- Sección de Bienvenida -->
+                <section class="text-center">
+                    <h2 class="text-3xl font-bold mb-4">Zauri Bot Dashboard</h2>
+                    <p class="text-gray-400">Bienvenido al panel de control de Zauri Bot. Aquí puedes monitorear estadísticas, invitaciones y más.</p>
+                </section>
+
+                <!-- Sección de Estadísticas Básicas -->
+                <section>
+                    <h2 class="text-xl font-semibold mb-4">Estadísticas Básicas</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <!-- Tarjeta 1 -->
+                        <div class="glass rounded-lg p-6">
+                            <h3 class="text-lg font-medium mb-2">Total Usuarios</h3>
+                            <p class="text-3xl font-bold">Cargando...</p>
+                        </div>
+                        <!-- Tarjeta 2 -->
+                        <div class="glass rounded-lg p-6">
+                            <h3 class="text-lg font-medium mb-2">Invitaciones Totales</h3>
+                            <p class="text-3xl font-bold">Cargando...</p>
+                        </div>
+                        <!-- Tarjeta 3 -->
+                        <div class="glass rounded-lg p-6">
+                            <h3 class="text-lg font-medium mb-2">Economía Total</h3>
+                            <p class="text-3xl font-bold">Cargando...</p>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Nota de Sincronización -->
+                <p class="text-center text-gray-400 mt-4">Sincronizado con el Servidor Seleccionado</p>
+
+                <!-- Sección de Mis Servidores -->
+                <section>
+                    <h2 class="text-xl font-semibold mb-4">Mis Servidores</h2>
+                    <div class="glass rounded-lg p-6">
+                        <div class="flex space-x-4">
+                            <div class="w-12 h-12 bg-gray-600 rounded-full"></div>
+                            <div class="w-12 h-12 bg-gray-600 rounded-full"></div>
+                            <div class="w-12 h-12 bg-gray-600 rounded-full"></div>
+                            <!-- Añade más círculos según sea necesario -->
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Sección de Comandos -->
+                <section>
+                    <h2 class="text-xl font-semibold mb-4">Comandos</h2>
+                    <div class="glass rounded-lg p-6">
+                        <p class="text-gray-400 mb-4">Instalando comandos de Prefijo y Slash...</p>
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                            <div class="flex flex-col items-center p-4 bg-white/5 rounded-lg">
+                                <i data-lucide="shield" class="w-8 h-8 mb-2"></i>
+                                <span>Moderación</span>
+                            </div>
+                            <div class="flex flex-col items-center p-4 bg-white/5 rounded-lg">
+                                <i data-lucide="ticket" class="w-8 h-8 mb-2"></i>
+                                <span>Tickets</span>
+                            </div>
+                            <div class="flex flex-col items-center p-4 bg-white/5 rounded-lg">
+                                <i data-lucide="users" class="w-8 h-8 mb-2"></i>
+                                <span>Roles</span>
+                            </div>
+                            <div class="flex flex-col items-center p-4 bg-white/5 rounded-lg">
+                                <i data-lucide="clock" class="w-8 h-8 mb-2"></i>
+                                <span>Sesión</span>
+                            </div>
+                            <div class="flex flex-col items-center p-4 bg-white/5 rounded-lg">
+                                <i data-lucide="dollar-sign" class="w-8 h-8 mb-2"></i>
+                                <span>Economía</span>
+                            </div>
+                            <div class="flex flex-col items-center p-4 bg-white/5 rounded-lg">
+                                <i data-lucide="music" class="w-8 h-8 mb-2"></i>
+                                <span>Música</span>
+                            </div>
+                            <div class="flex flex-col items-center p-4 bg-white/5 rounded-lg">
+                                <i data-lucide="tool" class="w-8 h-8 mb-2"></i>
+                                <span>Utilidad</span>
+                            </div>
+                            <div class="flex flex-col items-center p-4 bg-white/5 rounded-lg">
+                                <i data-lucide="smile" class="w-8 h-8 mb-2"></i>
+                                <span>Diversión</span>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+
+            <!-- Pie de página -->
+            <footer class="bg-[#0b0e14] p-4 text-center border-t border-white/10 mt-auto">
+                <p class="text-gray-400">Developed by angel</p>
+            </footer>
+        </main>
+    </div>
+
+    <!-- Inicializar Lucide Icons -->
+    <script>
+        lucide.createIcons();
+    </script>
+</body>
+</html>
