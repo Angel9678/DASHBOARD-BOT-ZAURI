@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=0.6">
-    <title>Zauri Bot Dashboard</title>
+    <title>Zauri Bot Dashboard | Premium</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script type="module">
         import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js';
@@ -25,26 +25,22 @@
             const config = {
                 economia: document.getElementById('toggle-economia').checked,
                 tickets: document.getElementById('toggle-tickets').checked,
-                moderacion: document.getElementById('toggle-moderacion').checked,
-                musica: document.getElementById('toggle-musica').checked,
                 welcomeMessage: document.getElementById('welcome-message').value,
                 verificationRole: document.getElementById('verification-role').value,
-                formTitle: document.getElementById('form-title').value,
                 timestamp: new Date().getTime()
             };
-
             try {
                 await set(ref(db, 'bot/config'), config);
                 alert('✅ ¡Sincronizado con Firebase!');
-            } catch (error) {
-                alert('❌ Error: ' + error.message);
-            }
+            } catch (e) { alert('❌ Error: ' + e.message); }
         };
     </script>
     <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
     <style>
         body { font-family: 'Inter', sans-serif; background-color: #0f172a; color: white; }
         .glass { background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.05); }
+        .cmd-card { background: rgba(255, 255, 255, 0.02); border-radius: 12px; padding: 12px; border: 1px solid rgba(255,255,255,0.05); transition: 0.3s; }
+        .cmd-card:hover { background: rgba(255, 255, 255, 0.05); transform: translateY(-2px); }
         .toggle-switch { appearance: none; width: 44px; height: 22px; background: #1e293b; border-radius: 20px; position: relative; cursor: pointer; transition: 0.3s; }
         .toggle-switch:checked { background: #5865f2; }
         .toggle-switch::before { content: ''; position: absolute; width: 16px; height: 16px; background: white; border-radius: 50%; top: 3px; left: 4px; transition: 0.3s; }
@@ -55,113 +51,121 @@
 <body>
     <div class="flex h-screen overflow-hidden">
         <aside class="w-64 bg-[#080a0f] border-r border-white/5 p-6 flex flex-col">
-            <h2 class="text-xl font-bold text-[#5865f2] mb-10 flex items-center gap-2">
-                <i data-lucide="zap"></i> Zauri Bot
-            </h2>
+            <h2 class="text-xl font-bold text-[#5865f2] mb-10 flex items-center gap-2"><i data-lucide="zap"></i> Zauri Bot</h2>
             <nav class="space-y-4 flex-1">
-                <button onclick="showSection('inicio')" class="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-white/5 transition-all text-gray-400 hover:text-white">
-                    <i data-lucide="home"></i> Inicio
-                </button>
-                <button onclick="showSection('configuracion')" class="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-white/5 transition-all text-gray-400 hover:text-white">
-                    <i data-lucide="settings"></i> Configuración
-                </button>
-                <a href="https://discord.gg/zauri" target="_blank" class="flex items-center gap-3 p-3 rounded-xl bg-[#5865f2]/10 border border-[#5865f2]/20 text-[#5865f2] hover:bg-[#5865f2]/20 transition-all">
-                    <i data-lucide="help-circle"></i> Soporte
-                </a>
+                <button onclick="showSection('inicio')" class="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-white/10 text-gray-400 hover:text-white transition-all"><i data-lucide="home"></i> Inicio</button>
+                <button onclick="showSection('comandos')" class="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-white/10 text-gray-400 hover:text-white transition-all"><i data-lucide="terminal"></i> Comandos</button>
+                <button onclick="showSection('configuracion')" class="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-white/10 text-gray-400 hover:text-white transition-all"><i data-lucide="settings"></i> Configuración</button>
+                <a href="https://discord.gg/zauri" target="_blank" class="flex items-center gap-3 p-3 rounded-xl bg-[#5865f2]/10 border border-[#5865f2]/20 text-[#5865f2] hover:bg-[#5865f2]/20 transition-all"><i data-lucide="help-circle"></i> Soporte</a>
             </nav>
-            <div class="text-[10px] opacity-40 text-center">Developed by angel</div>
         </aside>
 
-        <main class="flex-1 overflow-y-auto p-8 bg-[#0f172a]">
+        <main class="flex-1 overflow-y-auto p-8">
             <header class="flex justify-between items-center mb-10">
-                <h1 id="section-title" class="text-2xl font-bold text-white">Panel Principal</h1>
-                <button id="loginBtn" onclick="handleLogin()" class="bg-[#5865f2] hover:bg-[#4752c4] text-white px-6 py-2 rounded-full text-sm font-bold transition">
-                    Login con Discord
-                </button>
+                <h1 id="section-title" class="text-2xl font-bold">Panel Principal</h1>
+                <div class="flex items-center gap-4">
+                    <div id="user-info" class="hidden flex items-center gap-2 glass px-3 py-1 rounded-full text-sm">
+                        <img id="user-avatar" class="w-6 h-6 rounded-full" src="" alt="">
+                        <span id="user-name"></span>
+                    </div>
+                    <button id="loginBtn" onclick="handleLogin()" class="bg-[#5865f2] hover:bg-[#4752c4] text-white px-6 py-2 rounded-full text-sm font-bold transition">Login</button>
+                </div>
             </header>
 
-            <div id="inicio-section" class="space-y-8">
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    <div class="glass p-6 rounded-2xl">
-                        <h4 class="text-gray-400 text-xs font-bold uppercase">Usuarios</h4>
-                        <p class="text-2xl font-bold mt-2">1,240</p>
-                    </div>
-                    <div class="glass p-6 rounded-2xl">
-                        <h4 class="text-gray-400 text-xs font-bold uppercase">Servidores</h4>
-                        <p class="text-2xl font-bold mt-2">15</p>
-                    </div>
-                    <div class="glass p-6 rounded-2xl">
-                        <h4 class="text-gray-400 text-xs font-bold uppercase">Comandos Usados</h4>
-                        <p class="text-2xl font-bold mt-2">8.5k</p>
+            <div id="inicio-section" class="space-y-6">
+                <h3 class="text-sm font-bold text-slate-500 uppercase tracking-widest">Mis Servidores</h3>
+                <div id="servers-container" class="grid grid-cols-1 md:grid-cols-3 gap-6 text-center text-gray-500">
+                    <p class="col-span-3 py-10 glass rounded-2xl">Inicia sesión para ver tus servidores de Discord.</p>
+                </div>
+            </div>
+
+            <div id="comandos-section" class="hidden space-y-8">
+                <div class="glass p-6 rounded-3xl">
+                    <h3 class="text-[#5865f2] font-bold mb-4 flex items-center gap-2"><i data-lucide="shield"></i> Moderación</h3>
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+                        <div class="cmd-card text-xs"><b>/kick</b> - Expulsar</div>
+                        <div class="cmd-card text-xs"><b>/ban</b> - Banear</div>
+                        <div class="cmd-card text-xs"><b>/mute</b> - Silenciar</div>
+                        <div class="cmd-card text-xs"><b>/unmute</b> - Des-silenciar</div>
+                        <div class="cmd-card text-xs"><b>/unban</b> - Des-banear</div>
                     </div>
                 </div>
-
-                <div class="glass p-6 rounded-2xl">
-                    <h3 class="text-sm font-bold uppercase tracking-widest text-slate-500 mb-6">Módulos Activos</h3>
-                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-                        <div class="bg-white/5 p-4 rounded-xl text-center"><i data-lucide="shield" class="mx-auto mb-2 text-green-400"></i> Moderación</div>
-                        <div class="bg-white/5 p-4 rounded-xl text-center"><i data-lucide="coins" class="mx-auto mb-2 text-yellow-400"></i> Economía</div>
-                        <div class="bg-white/5 p-4 rounded-xl text-center"><i data-lucide="music" class="mx-auto mb-2 text-purple-400"></i> Música</div>
-                        <div class="bg-white/5 p-4 rounded-xl text-center"><i data-lucide="smile" class="mx-auto mb-2 text-pink-400"></i> Diversión</div>
-                        <div class="bg-white/5 p-4 rounded-xl text-center"><i data-lucide="wrench" class="mx-auto mb-2 text-blue-400"></i> Utilidad</div>
-                        <div class="bg-white/5 p-4 rounded-xl text-center"><i data-lucide="form-input" class="mx-auto mb-2 text-orange-400"></i> Formularios</div>
+                <div class="glass p-6 rounded-3xl">
+                    <h3 class="text-yellow-500 font-bold mb-4 flex items-center gap-2"><i data-lucide="coins"></i> Economía</h3>
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+                        <div class="cmd-card text-xs"><b>/balance</b> - Ver saldo</div>
+                        <div class="cmd-card text-xs"><b>/work</b> - Trabajar</div>
+                        <div class="cmd-card text-xs"><b>/collect</b> - Recolectar</div>
+                        <div class="cmd-card text-xs"><b>/rob</b> - Robar</div>
+                        <div class="cmd-card text-xs"><b>/dep</b> - Depositar</div>
+                        <div class="cmd-card text-xs"><b>/with</b> - Retirar</div>
+                        <div class="cmd-card text-xs font-bold text-red-400">/agregar-dinero</div>
+                        <div class="cmd-card text-xs font-bold text-red-400">/agregar-salarios</div>
                     </div>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="glass p-6 rounded-3xl"><h3 class="text-purple-400 font-bold mb-4 flex items-center gap-2"><i data-lucide="music"></i> Música</h3><p class="text-xs text-gray-500">Play, Skip, Stop, Queue, Volume...</p></div>
+                    <div class="glass p-6 rounded-3xl"><h3 class="text-pink-400 font-bold mb-4 flex items-center gap-2"><i data-lucide="form-input"></i> Formularios</h3><p class="text-xs text-gray-500">Máximo 5 formularios por servidor.</p></div>
                 </div>
             </div>
 
             <div id="configuracion-section" class="hidden space-y-6">
                 <div class="glass p-6 rounded-3xl">
-                    <h3 class="text-sm font-bold uppercase tracking-widest text-slate-500 mb-6">Interruptores de Módulos</h3>
+                    <h3 class="text-sm font-bold text-slate-500 mb-6 uppercase">Módulos del Bot</h3>
                     <div class="space-y-4">
-                        <div class="flex justify-between items-center"><span>Economía</span><input type="checkbox" id="toggle-economia" class="toggle-switch" checked></div>
-                        <div class="flex justify-between items-center"><span>Tickets</span><input type="checkbox" id="toggle-tickets" class="toggle-switch"></div>
-                        <div class="flex justify-between items-center"><span>Moderación</span><input type="checkbox" id="toggle-moderacion" class="toggle-switch" checked></div>
-                        <div class="flex justify-between items-center"><span>Música</span><input type="checkbox" id="toggle-musica" class="toggle-switch"></div>
+                        <div class="flex justify-between items-center"><span>Sistema de Economía</span><input type="checkbox" id="toggle-economia" class="toggle-switch" checked></div>
+                        <div class="flex justify-between items-center"><span>Sistema de Tickets</span><input type="checkbox" id="toggle-tickets" class="toggle-switch"></div>
                     </div>
                 </div>
-
-                <div class="glass p-6 rounded-3xl">
-                    <h3 class="text-sm font-bold uppercase tracking-widest text-slate-500 mb-6">Personalización</h3>
-                    <div class="space-y-4">
-                        <div>
-                            <label class="block text-xs mb-2">MENSAJE DE BIENVENIDA</label>
-                            <textarea id="welcome-message" class="w-full bg-black/40 border border-white/10 rounded-xl p-3 outline-none" rows="2"></textarea>
-                        </div>
-                        <div>
-                            <label class="block text-xs mb-2">ID ROL VERIFICACIÓN</label>
-                            <input type="text" id="verification-role" class="w-full bg-black/40 border border-white/10 rounded-xl p-3 outline-none">
-                        </div>
-                        <div>
-                            <label class="block text-xs mb-2">TÍTULO DE FORMULARIO</label>
-                            <input type="text" id="form-title" class="w-full bg-black/40 border border-white/10 rounded-xl p-3 outline-none">
-                        </div>
-                    </div>
+                <div class="glass p-6 rounded-3xl space-y-4">
+                    <h3 class="text-sm font-bold text-slate-500 mb-2 uppercase">Bienvenida y Verificación</h3>
+                    <textarea id="welcome-message" class="w-full bg-black/20 border border-white/10 rounded-xl p-3 text-sm outline-none" rows="3" placeholder="Mensaje de bienvenida..."></textarea>
+                    <input type="text" id="verification-role" class="w-full bg-black/20 border border-white/10 rounded-xl p-3 text-sm outline-none" placeholder="ID del Rol de Verificación">
                 </div>
-
-                <button onclick="finalSave()" class="w-full bg-[#5865f2] hover:bg-[#4752c4] py-4 rounded-2xl font-bold uppercase transition shadow-xl shadow-indigo-500/10">
-                    Sincronizar con Zauri Bot
-                </button>
+                <button onclick="finalSave()" class="w-full bg-[#5865f2] py-4 rounded-2xl font-bold transition shadow-xl">Sincronizar</button>
             </div>
         </main>
     </div>
 
     <script>
         lucide.createIcons();
-
-        function showSection(sectionId) {
-            document.getElementById('inicio-section').classList.add('hidden');
-            document.getElementById('configuracion-section').classList.add('hidden');
-            document.getElementById(sectionId + '-section').classList.remove('hidden');
-            document.getElementById('section-title').innerText = sectionId === 'inicio' ? 'Panel Principal' : 'Configuración';
+        function showSection(id) {
+            ['inicio', 'comandos', 'configuracion'].forEach(s => document.getElementById(s + '-section').classList.add('hidden'));
+            document.getElementById(id + '-section').classList.remove('hidden');
+            document.getElementById('section-title').innerText = id.charAt(0).toUpperCase() + id.slice(1);
         }
 
-        const CLIENT_ID = '1496023683385528411'; 
-        const REDIRECT_URI = 'https://angel9678.github.io/DASHBOARD-BOT-ZAURI/';
+        const CLIENT_ID = '1496023683385528411';
+        const REDIRECT_URI = window.location.origin + window.location.pathname;
 
         function handleLogin() {
-            const AUTH_URL = `https://discord.com/api/oauth2/authorize?client_id=${CLIENT_ID}&response_type=token&redirect_uri=${encodeURIComponent(REDIRECT_URI)}&scope=identify+guilds`;
-            window.location.href = AUTH_URL;
+            window.location.href = `https://discord.com/api/oauth2/authorize?client_id=${CLIENT_ID}&response_type=token&redirect_uri=${encodeURIComponent(REDIRECT_URI)}&scope=identify+guilds`;
         }
+
+        window.onload = () => {
+            const params = new URLSearchParams(window.location.hash.slice(1));
+            const token = params.get('access_token');
+            if (token) {
+                fetch('https://discord.com/api/users/@me', { headers: { Authorization: `Bearer ${token}` }})
+                    .then(r => r.json()).then(user => {
+                        document.getElementById('user-info').classList.remove('hidden');
+                        document.getElementById('user-name').innerText = user.username;
+                        document.getElementById('user-avatar').src = `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png`;
+                        document.getElementById('loginBtn').classList.add('hidden');
+                    });
+                
+                fetch('https://discord.com/api/users/@me/guilds', { headers: { Authorization: `Bearer ${token}` }})
+                    .then(r => r.json()).then(guilds => {
+                        const container = document.getElementById('servers-container');
+                        container.innerHTML = guilds.filter(g => (g.permissions & 0x8) === 0x8).map(g => `
+                            <div class="glass p-4 rounded-2xl flex items-center gap-4 hover:border-[#5865f2] transition-all cursor-pointer">
+                                <img class="w-12 h-12 rounded-full" src="https://cdn.discordapp.com/icons/${g.id}/${g.icon}.png" onerror="this.src='https://ui-avatars.com/api/?name=${g.name}'">
+                                <span class="font-bold text-sm truncate">${g.name}</span>
+                            </div>
+                        `).join('');
+                    });
+            }
+        };
     </script>
 </body>
 </html>
