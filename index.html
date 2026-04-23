@@ -3,169 +3,151 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=0.6">
-    <title>Zauri Dashboard Pro</title>
+    <title>Dashboard Zauri Bot</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
+    <script type="module">
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js';
+        import { getDatabase, ref, set } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-database.js';
+
+        // Configuración de Firebase
+        const firebaseConfig = {
+            apiKey: 'AIzaSyCFYTRogH99upryQPYb5AcK5mUmsQyjULI',
+            authDomain: 'zauri-dashboard.firebaseapp.com',
+            projectId: 'zauri-dashboard',
+            storageBucket: 'zauri-dashboard.firebasestorage.app',
+            messagingSenderId: '889952016491',
+            appId: '1:889952016491:web:3a07d588a12fab3169b92e'
+        };
+
+        // Inicializar Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+
+        // Función para guardar configuración en Firebase
+        window.finalSave = async function() {
+            const config = {
+                economia: document.getElementById('toggle-economia').checked,
+                tickets: document.getElementById('toggle-tickets').checked,
+                welcomeMessage: document.getElementById('welcome-message').value,
+                verificationRole: document.getElementById('verification-role').value
+            };
+
+            try {
+                await set(ref(db, 'bot/config'), config);
+                alert('✅ Configuración guardada exitosamente en Firebase.');
+                console.log('Configuración guardada:', config);
+            } catch (error) {
+                alert('❌ Error al guardar la configuración: ' + error.message);
+                console.error('Error saving config:', error);
+            }
+        };
+    </script>
     <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
     <style>
-        .glass { background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.1); }
-        .switch { position: relative; display: inline-block; width: 50px; height: 26px; }
-        .switch input { opacity: 0; width: 0; height: 0; }
-        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #334155; transition: .4s; border-radius: 34px; }
-        .slider:before { position: absolute; content: ""; height: 18px; width: 18px; left: 4px; bottom: 4px; background-color: white; transition: .4s; border-radius: 50%; }
-        input:checked + .slider { background-color: #5865f2; }
-        input:checked + .slider:before { transform: translateX(24px); }
+        body { font-family: 'Inter', sans-serif; }
+        .glass {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+        }
+        .toggle-switch {
+            appearance: none;
+            width: 50px;
+            height: 28px;
+            background-color: #3f3f46;
+            border-radius: 34px;
+            cursor: pointer;
+            position: relative;
+            transition: background-color 0.3s;
+            border: none;
+        }
+        .toggle-switch:checked { background-color: #5865f2; }
+        .toggle-switch::before {
+            content: '';
+            position: absolute;
+            width: 24px;
+            height: 24px;
+            background-color: white;
+            border-radius: 50%;
+            top: 2px;
+            left: 2px;
+            transition: left 0.3s;
+        }
+        .toggle-switch:checked::before { left: 24px; }
     </style>
 </head>
-<body class="bg-[#0f172a] text-slate-200 overflow-hidden">
+<body class="bg-slate-900 text-white">
     <div class="flex h-screen">
-        <aside class="w-64 bg-[#0b0e14] border-r border-white/5 p-6 flex flex-col">
-            <h2 class="text-2xl font-bold text-[#5865f2] mb-10 flex items-center gap-2"><i data-lucide="bot"></i> Zauri Bot</h2>
-            <nav class="space-y-2 flex-1">
-                <button onclick="changeTab('home')" class="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-white/5 transition active-tab" id="nav-home">
-                    <i data-lucide="layout-grid"></i> Inicio
-                </button>
-                <button onclick="changeTab('config')" class="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-white/5 transition" id="nav-config">
-                    <i data-lucide="sliders-horizontal"></i> Configuración
-                </button>
-                <a href="https://discord.gg/zauri" target="_blank" class="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-white/5 transition">
-                    <i data-lucide="help-circle"></i> Soporte
-                </a>
-            </nav>
-            <div class="text-[10px] text-slate-600 font-mono text-center">ANGEL DEVELOPER © 2026</div>
+        <aside class="w-64 bg-[#0b0e14] fixed h-full z-10">
+            <div class="p-6">
+                <h2 class="text-xl font-bold mb-8">Zauri Bot</h2>
+                <nav class="space-y-4">
+                    <a href="#" onclick="showSection('inicio')" class="flex items-center space-x-3 p-3 rounded-lg hover:bg-white/10 transition-all">
+                        <i data-lucide="home" class="w-5 h-5"></i>
+                        <span>Inicio</span>
+                    </a>
+                    <a href="#" onclick="showSection('configuracion')" class="flex items-center space-x-3 p-3 rounded-lg hover:bg-white/10 transition-all">
+                        <i data-lucide="sliders" class="w-5 h-5"></i>
+                        <span>Configuración</span>
+                    </a>
+                </nav>
+            </div>
         </aside>
 
-        <main class="flex-1 flex flex-col overflow-y-auto">
-            <header class="p-6 bg-[#0b0e14]/50 border-b border-white/5 flex justify-between items-center sticky top-0 z-50">
-                <h1 class="text-xl font-semibold" id="main-title">Dashboard de Inicio</h1>
-                <button id="loginBtn" onclick="handleLogin()" class="bg-[#5865f2] hover:bg-[#4752c4] px-5 py-2 rounded-lg font-bold transition flex items-center gap-2">
-                    <i data-lucide="log-in"></i> Login con Discord
-                </button>
+        <main class="flex-1 bg-[#0f172a] ml-64 flex flex-col">
+            <header class="bg-[#0b0e14] p-4 flex justify-between items-center border-b border-white/10">
+                <h1 class="text-2xl font-semibold">Dashboard Zauri Bot</h1>
+                <button id="loginBtn" class="bg-[#5865f2] px-4 py-2 rounded-lg font-medium" onclick="handleLogin()">Login</button>
             </header>
 
-            <div class="p-8 space-y-10" id="home-content">
-                <section>
-                    <h2 class="text-lg font-bold mb-6 flex items-center gap-2"><i data-lucide="server"></i> Mis Servidores</h2>
-                    <div class="glass rounded-3xl p-8">
-                        <div id="serversList" class="flex flex-wrap gap-6 justify-center md:justify-start">
-                            <p class="text-slate-500 italic">Inicia sesión para cargar tus servidores...</p>
+            <div id="content" class="p-6 space-y-8 overflow-y-auto flex-1">
+                <div id="configuracion-section">
+                    <h2 class="text-2xl font-bold mb-6">Configuración del Bot</h2>
+                    
+                    <section class="mb-8">
+                        <div class="glass rounded-lg p-6 space-y-4">
+                            <div class="flex items-center justify-between">
+                                <span>Economía</span>
+                                <input type="checkbox" id="toggle-economia" class="toggle-switch" checked>
+                            </div>
+                            <div class="flex items-center justify-between">
+                                <span>Tickets</span>
+                                <input type="checkbox" id="toggle-tickets" class="toggle-switch" checked>
+                            </div>
                         </div>
-                    </div>
-                </section>
+                    </section>
 
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    <div class="glass p-6 rounded-2xl">
-                        <h3 class="text-xs text-slate-500 font-bold uppercase">Usuarios Totales</h3>
-                        <p class="text-3xl font-black mt-2">Cargando...</p>
-                    </div>
-                    <div class="glass p-6 rounded-2xl text-[#5865f2]">
-                        <h3 class="text-xs text-slate-500 font-bold uppercase">Estado</h3>
-                        <p class="text-3xl font-black mt-2">Online</p>
-                    </div>
-                    <div class="glass p-6 rounded-2xl">
-                        <h3 class="text-xs text-slate-500 font-bold uppercase">Comandos Usados</h3>
-                        <p class="text-3xl font-black mt-2">---</p>
-                    </div>
+                    <section class="mb-8">
+                        <div class="glass rounded-lg p-6 space-y-4">
+                            <div>
+                                <label class="block text-sm mb-2">Mensaje de Bienvenida</label>
+                                <textarea id="welcome-message" class="w-full bg-white/10 border border-white/20 rounded-lg p-3 text-white" rows="4"></textarea>
+                            </div>
+                            <div>
+                                <label class="block text-sm mb-2">ID del Rol de Verificación</label>
+                                <input type="text" id="verification-role" class="w-full bg-white/10 border border-white/20 rounded-lg p-3 text-white">
+                            </div>
+                        </div>
+                    </section>
+
+                    <button onclick="finalSave()" class="bg-[#5865f2] px-6 py-3 rounded-lg font-medium flex items-center gap-2">
+                        <i data-lucide="save" class="w-5 h-5"></i>
+                        Guardar Configuración
+                    </button>
                 </div>
-            </div>
-
-            <div class="p-8 space-y-10 hidden" id="config-content">
-                <section class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div class="glass p-6 rounded-2xl flex justify-between items-center">
-                        <div>
-                            <h4 class="font-bold">Módulo de Economía</h4>
-                            <p class="text-xs text-slate-500">Activa comandos de banco y dinero.</p>
-                        </div>
-                        <label class="switch"><input type="checkbox" checked><span class="slider"></span></label>
-                    </div>
-                    <div class="glass p-6 rounded-2xl flex justify-between items-center">
-                        <div>
-                            <h4 class="font-bold">Módulo de Verificación</h4>
-                            <p class="text-xs text-slate-500">Sistema automático de acceso.</p>
-                        </div>
-                        <label class="switch"><input type="checkbox"><span class="slider"></span></label>
-                    </div>
-                </section>
-
-                <section class="glass p-8 rounded-3xl space-y-4 border-l-4 border-[#5865f2]">
-                    <h3 class="font-bold flex items-center gap-2"><i data-lucide="megaphone"></i> Sistema de Bienvenida</h3>
-                    <textarea class="w-full bg-black/20 border border-white/10 rounded-xl p-4 text-sm" rows="3" placeholder="Ej: ¡Hola {user}, bienvenido a {server}!"></textarea>
-                    <div class="flex flex-wrap gap-4">
-                        <div class="flex-1 min-w-[200px]">
-                            <label class="text-xs text-slate-500 font-bold">ID ROL VERIFICACIÓN</label>
-                            <input type="text" class="w-full bg-black/20 border border-white/10 rounded-lg p-2 mt-1 text-sm" placeholder="ID del rol">
-                        </div>
-                        <div class="flex-1 min-w-[200px]">
-                            <label class="text-xs text-slate-500 font-bold">CANAL DE LOGS</label>
-                            <input type="text" class="w-full bg-black/20 border border-white/10 rounded-lg p-2 mt-1 text-sm" placeholder="ID del canal">
-                        </div>
-                    </div>
-                </section>
-
-                <button onclick="alert('Configuración guardada (Enviando datos al bot...)')" class="bg-[#5865f2] hover:bg-[#4752c4] w-full py-4 rounded-2xl font-bold text-white shadow-xl shadow-indigo-500/10">
-                    GUARDAR CAMBIOS EN EL BOT
-                </button>
             </div>
         </main>
     </div>
 
     <script>
         lucide.createIcons();
-
-        const CLIENT_ID = '1496023683385528411';
-        const REDIRECT_URI = 'https://angel9678.github.io/DASHBOARD-BOT-ZAURI/';
-        const AUTH_URL = `https://discord.com/api/oauth2/authorize?client_id=${CLIENT_ID}&redirect_uri=${encodeURIComponent(REDIRECT_URI)}&response_type=token&scope=identify+guilds`;
-
-        function handleLogin() { window.location.href = AUTH_URL; }
-
-        function changeTab(tab) {
-            document.getElementById('home-content').classList.toggle('hidden', tab !== 'home');
-            document.getElementById('config-content').classList.toggle('hidden', tab !== 'config');
-            document.getElementById('main-title').textContent = tab === 'home' ? 'Dashboard de Inicio' : 'Configuración del Bot';
+        function showSection(id) {
+            // Lógica simple para mostrar/ocultar secciones
+            console.log("Cambiando a sección:", id);
         }
-
-        async function loadInterface() {
-            const hash = window.location.hash;
-            if (hash.includes('access_token')) {
-                const params = new URLSearchParams(hash.substring(1));
-                localStorage.setItem('zauri_token', params.get('access_token'));
-                window.history.replaceState({}, document.title, window.location.pathname);
-            }
-
-            const token = localStorage.getItem('zauri_token');
-            if (!token) return;
-
-            try {
-                const userRes = await fetch('https://discord.com/api/users/@me', { headers: { Authorization: `Bearer ${token}` } });
-                const user = await userRes.json();
-                if (user.username) {
-                    document.getElementById('loginBtn').textContent = user.username;
-                    document.getElementById('loginBtn').onclick = () => { localStorage.removeItem('zauri_token'); window.location.reload(); };
-                }
-
-                const guildsRes = await fetch('https://discord.com/api/users/@me/guilds', { headers: { Authorization: `Bearer ${token}` } });
-                const guilds = await guildsRes.json();
-                
-                // LÓGICA DE PERMISOS MEJORADA: Dueño o Administrador o Gestionar Server
-                const adminGuilds = guilds.filter(g => g.owner === true || (g.permissions & 0x8) === 0x8 || (g.permissions & 0x20) === 0x20);
-                
-                const list = document.getElementById('serversList');
-                list.innerHTML = '';
-
-                if (adminGuilds.length === 0) {
-                    list.innerHTML = '<p class="text-slate-500">No se detectaron servidores donde tengas permisos de Admin.</p>';
-                }
-
-                adminGuilds.forEach(guild => {
-                    const icon = guild.icon ? `https://cdn.discordapp.com/icons/${guild.id}/${guild.icon}.png` : 'https://cdn.discordapp.com/embed/avatars/0.png';
-                    list.innerHTML += `
-                        <div class="flex flex-col items-center gap-2 group">
-                            <img src="${icon}" class="w-16 h-16 rounded-2xl border-2 border-transparent group-hover:border-[#5865f2] group-hover:scale-110 transition cursor-pointer" title="${guild.name}">
-                            <span class="text-[9px] font-bold text-slate-500 uppercase truncate w-16 text-center">${guild.name}</span>
-                        </div>`;
-                });
-            } catch (err) { console.error(err); localStorage.removeItem('zauri_token'); }
-        }
-        window.addEventListener('DOMContentLoaded', loadInterface);
     </script>
 </body>
 </html>
